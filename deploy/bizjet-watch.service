@@ -1,0 +1,31 @@
+# systemd unit for bizjet-watch.
+# Install:
+#   sudo cp deploy/bizjet-watch.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now bizjet-watch
+# Control:
+#   sudo systemctl start bizjet-watch     # turn collection ON
+#   sudo systemctl stop  bizjet-watch     # turn collection OFF
+#   sudo systemctl status bizjet-watch
+#   journalctl -u bizjet-watch -f         # live logs
+#
+# Adjust User= and the paths to match your install location.
+[Unit]
+Description=BizJet Watch - business jet movement tracker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/bizjet-watch
+ExecStart=/home/pi/bizjet-watch/.venv/bin/python app.py
+Restart=on-failure
+RestartSec=10
+# Optional: lift OpenSky anonymous rate limits
+# Environment=OPENSKY_CLIENT_ID=your_id
+# Environment=OPENSKY_CLIENT_SECRET=your_secret
+# Environment=BIZJET_PORT=8000
+
+[Install]
+WantedBy=multi-user.target
